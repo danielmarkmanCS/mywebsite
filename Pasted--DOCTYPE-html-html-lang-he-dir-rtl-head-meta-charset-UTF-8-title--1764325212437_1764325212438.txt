@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>דניאל - סייבר ואבטחת מידע</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    margin: 0;
+    background: #000;
+    color: #e4e4e4;
+    font-family: Arial, sans-serif;
+    overflow-x: hidden;
+}
+#matrix {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+}
+header {
+    text-align: center;
+    padding: 60px 20px;
+}
+h1 {
+    color: #14ffec;
+    font-size: 32px;
+}
+.typing {
+    font-size: 18px;
+    height: 30px;
+    margin-top: 10px;
+}
+.links a {
+    color: #14ffec;
+    text-decoration: none;
+    margin: 0 10px;
+}
+section {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid #14ffec;
+}
+.skill {
+    margin: 6px 0;
+}
+#terminal {
+    background: #000;
+    color: #14ffec;
+    height: 200px;
+    overflow-y: auto;
+    padding: 10px;
+    font-family: monospace;
+}
+#terminal-input {
+    width: 100%;
+    border: none;
+    background: #000;
+    color: #0affd1;
+    outline: none;
+    font-family: monospace;
+}
+input, textarea {
+    width: 100%;
+    margin: 8px 0;
+    padding: 10px;
+    background: #0f0f17;
+    color: white;
+    border: 1px solid #14ffec;
+}
+button {
+    width: 100%;
+    padding: 10px;
+    background: #14ffec;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="matrix"></canvas>
+
+<header>
+    <h1>דניאל - סייבר ואבטחת מידע</h1>
+    <div class="typing" id="typing"></div>
+
+    <div class="links">
+        <a href="#">אינסטגרם</a>
+        <a href="#">לינקדאין</a>
+        <a href="mailto:test@test.com">מייל</a>
+    </div>
+</header>
+
+<section>
+    <h2>כישורי סייבר</h2>
+    <div class="skill">בדיקות חדירות</div>
+    <div class="skill">עבודה עם Kali Linux</div>
+    <div class="skill">Nmap, Burp Suite</div>
+    <div class="skill">ניתוח לוגים</div>
+</section>
+
+<section id="terminal">
+    <div id="terminal-output">help - לקבלת פקודות</div>
+    <input id="terminal-input" placeholder="root@daniel:~$">
+</section>
+
+<section>
+    <h2>יצירת קשר</h2>
+    <input id="name" placeholder="שם">
+    <input id="email" placeholder="אימייל">
+    <textarea id="msg" placeholder="הודעה"></textarea>
+    <button onclick="sendMsg()">שליחה</button>
+</section>
+
+<script>
+/* MATRIX */
+const c = document.getElementById("matrix");
+const ctx = c.getContext("2d");
+c.height = window.innerHeight;
+c.width = window.innerWidth;
+const chars = "01אבגדהוזחטיכלמנסעפצקרשת";
+const font = 14;
+const cols = c.width / font;
+let drops = [];
+for (let i = 0; i < cols; i++) drops[i] = 1;
+
+function drawMatrix() {
+    ctx.fillStyle = "rgba(0,0,0,0.05)";
+    ctx.fillRect(0,0,c.width,c.height);
+    ctx.fillStyle = "#14ffec";
+    ctx.font = font + "px monospace";
+
+    for (let i = 0; i < drops.length; i++) {
+        let text = chars[Math.floor(Math.random()*chars.length)];
+        ctx.fillText(text, i*font, drops[i]*font);
+        if (drops[i]*font > c.height && Math.random() > 0.95) drops[i] = 0;
+        drops[i]++;
+    }
+}
+setInterval(drawMatrix, 40);
+
+/* TYPING */
+const words = ["חוקר סייבר", "פנטסטר", "לומד כל יום", "מחפש הזדמנות"];
+let i = 0, j = 0, del = false;
+function type() {
+    const el = document.getElementById("typing");
+    let w = words[i];
+    if (!del) {
+        el.textContent = w.substring(0, j++);
+        if (j === w.length + 1) { del = true; setTimeout(type, 1000); return; }
+    } else {
+        el.textContent = w.substring(0, j--);
+        if (j === 0) { del = false; i = (i + 1) % words.length; }
+    }
+    setTimeout(type, del ? 40 : 80);
+}
+type();
+
+/* TERMINAL */
+document.getElementById("terminal-input").addEventListener("keydown", function(e){
+    if(e.key === "Enter"){
+        let cmd = this.value.trim();
+        let out = document.getElementById("terminal-output");
+
+        if(cmd === "help") out.innerHTML += "<br>help, about, clear";
+        else if(cmd === "about") out.innerHTML += "<br>דניאל - סייבר ואבטחת מידע";
+        else if(cmd === "clear") out.innerHTML = "";
+        else out.innerHTML += "<br>פקודה לא מוכרת";
+
+        this.value = "";
+        out.scrollTop = out.scrollHeight;
+    }
+});
+
+/* FORM */
+function sendMsg(){
+    alert("ההודעה נשלחה");
+}
+</script>
+
+</body>
+</html>
